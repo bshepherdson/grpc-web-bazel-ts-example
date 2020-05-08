@@ -1,0 +1,24 @@
+{
+  "version": "3.8.3",
+  "compilerOptions": {
+    "lib": [
+      "es5",
+      "es2015.promise",
+      "es2016",
+      "esnext.asynciterable",
+      "es2017.object"
+    ],
+    "target": "es2018",
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "vac/*": [
+        "*"
+      ]
+    }
+  }
+}

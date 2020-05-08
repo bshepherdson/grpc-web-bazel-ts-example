@@ -1,0 +1,18 @@
+{
+    "name": "ts_proto_test",
+    "version": "0.1.0",
+    "private": true,
+    "devDependencies": {
+        "@bazel/bazelisk": "latest",
+        "@bazel/buildifier": "latest",
+        "@bazel/ibazel": "latest",
+        "@bazel/rollup": "^1.6.1",
+        "@bazel/typescript": "^1.6.1",
+        "rollup": "^2.8.2",
+        "typescript": "^3.8.3"
+    },
+    "scripts": {
+        "build": "bazel build //...",
+        "test": "bazel test //..."
+    }
+}

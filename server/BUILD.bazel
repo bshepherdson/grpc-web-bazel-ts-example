@@ -1,0 +1,40 @@
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+load("@npm_bazel_rollup//:index.bzl", "rollup_bundle")
+load("@npm_bazel_typescript//:index.bzl", "ts_library")
+
+exports_files(["tsconfig.json"], visibility = ["//visibility:public"])
+
+ts_library(
+    name = "server_lib",
+    srcs = glob(["*.ts"]),
+    deps = [
+        "@npm//@types/node",
+        "//server/lib",
+    ],
+    tsconfig = ":tsconfig.json",
+)
+
+#filegroup(
+#    name = "server.js",
+#    srcs = [":server_lib"],
+#    output_group = "es5_sources", # es5_sources is devmode
+#    #output_group = "es6_sources", # es6_sources is prodmode
+#)
+
+rollup_bundle(
+    name = "bundle_server",
+    entry_point = "main.ts",
+    deps = [
+        ":server_lib",
+    ],
+    format = "cjs",
+)
+
+nodejs_binary(
+    name = "server",
+    data = [
+        ":bundle_server.js",
+    ],
+    entry_point = "bundle_server.js",
+)
+
