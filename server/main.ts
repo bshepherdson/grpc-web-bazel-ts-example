@@ -1,41 +1,17 @@
-import {STR_HELLO} from './lib/lib';
-import * as grpc from 'grpc';
+import express from 'express';
+import {apiMiddleware} from './api/index';
 
-import {HelloRequest, HelloResponse} from 'vac/proto/greeter_pb';
-import {GreeterService, IGreeterServer} from 'vac/proto/greeter_grpc_pb';
+export const PORT = 5080;
 
-class GreeterHandler implements IGreeterServer {
-  sayHello(call: grpc.ServerUnaryCall<HelloRequest>,
-      callback: grpc.sendUnaryData<HelloResponse>): void {
-    const reply: HelloResponse = new HelloResponse();
-    reply.setMessage(`Hello, ${call.request.getName()}`);
-    callback(null, reply);
-  }
-}
+const app: express.Application = express();
 
-export const service = GreeterService;
-export const handler = new GreeterHandler();
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
 
-const PORT = 50051;
+app.use('/api', ...apiMiddleware);
 
-export function startServer(): void {
-  const server = new grpc.Server();
+app.listen(PORT, () => {
+  console.log(`Test app ready on port ${PORT}.`);
+});
 
-  // Register all the handlers here.
-  server.addService(service, handler);
-
-  server.bindAsync(
-    `0.0.0.0:${PORT}`,
-    grpc.ServerCredentials.createInsecure(),
-    (err: Error|null, port: number) => {
-      if (err != null) {
-        return console.error(err);
-      }
-      console.log(`gRPC listening on ${PORT}`);
-    },
-  );
-
-  server.start();
-}
-
-startServer();

@@ -6,46 +6,45 @@ load("@npm_bazel_typescript//:index.bzl", "ts_library")
 exports_files(["tsconfig.json"], visibility = ["//visibility:public"])
 
 ts_library(
-    name = "server_lib",
+    name = "api_lib",
     srcs = glob(["*.ts"]),
     deps = [
-        "@npm//@types/express",
         "@npm//@types/node",
-        "@npm//express",
-        "//server/api",
+        "@npm//grpc",
+        "//proto:greeter_proto_ts",
     ],
     tsconfig = ":tsconfig.json",
 )
 
 rollup_bundle(
-    name = "server_bundle",
+    name = "api_bundle",
     entry_point = "main.ts",
     deps = [
-        ":server_lib",
+        ":api_lib",
     ],
     format = "cjs",
 )
 
 RUNTIME_DEPS = [
-    "@npm//express",
     "@npm//google-protobuf",
     "@npm//grpc",
-    "@npm//grpc-express",
     "//proto:greeter_proto_ts",
-    ":server_bundle.js",
+    ":api_bundle.js",
 ]
-
-nodejs_image(
-    name = "server",
-    data = RUNTIME_DEPS,
-    entry_point = "server_bundle.js",
-    # See note in //api about the port parameter.
-    #ports = ["5080"],
-)
 
 nodejs_binary(
     name = "dev",
     data = RUNTIME_DEPS,
-    entry_point = "server_bundle.js",
+    entry_point = "api_bundle.js",
+)
+
+nodejs_image(
+    name = "api",
+    data = RUNTIME_DEPS,
+    entry_point = "api_bundle.js",
+    # TODO: I thought ports needed to be explicitly exported? container_image()
+    # supports that but apparently the Node.js one doesn't forward that
+    # parameter?
+    #ports = ["5051"],
 )
 
