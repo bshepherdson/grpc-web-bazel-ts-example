@@ -5,14 +5,24 @@
     "devDependencies": {
         "@bazel/bazelisk": "latest",
         "@bazel/buildifier": "latest",
-        "@bazel/ibazel": "latest",
+        "@bazel/ibazel": "^0.13.0",
+        "@bazel/labs": "^1.6.1",
         "@bazel/rollup": "^1.6.1",
         "@bazel/typescript": "^1.6.1",
+        "@types/google-protobuf": "^3.7.2",
+        "@types/node": "^13.13.5",
+        "grpc-tools": "^1.8.1",
+        "grpc_tools_node_protoc_ts": "^3.0.0",
+        "request": "^2.88.2",
         "rollup": "^2.8.2",
         "typescript": "^3.8.3"
     },
     "scripts": {
         "build": "bazel build //...",
         "test": "bazel test //..."
+    },
+    "dependencies": {
+        "google-protobuf": "^3.12.0-rc.1",
+        "grpc": "^1.24.2"
     }
 }

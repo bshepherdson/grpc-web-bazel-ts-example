@@ -17,7 +17,8 @@
     "baseUrl": ".",
     "paths": {
       "vac/*": [
-        "*"
+        "*",
+        "dist/bin/*"
       ]
     }
   }

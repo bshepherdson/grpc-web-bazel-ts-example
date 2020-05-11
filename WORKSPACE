@@ -37,3 +37,23 @@ install_bazel_dependencies()
 # TypeScript toolchain
 load("@npm_bazel_typescript//:index.bzl", "ts_setup_workspace")
 ts_setup_workspace()
+
+# Proto toolchain
+http_archive(
+    name = "com_google_protobuf",
+    strip_prefix = "protobuf-master",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/master.zip"],
+)
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+protobuf_deps()
+
+# Hack: I can't use grpc-tools' node wrappers properly, they don't like being
+# used as a plugin by the ts_grpc_proto_library rules.
+# So I depend directly on the plugin as a binary.
+http_archive(
+    name = "grpc_node_plugin",
+    urls = [" https://node-precompiled-binaries.grpc.io/grpc-tools/v1.8.1/linux-x64.tar.gz"],
+    sha256 = "ddfc9081c2993d574216870760775703fd974282dfd1cf417f89f58bdc08f1ed",
+    build_file = "//:grpc_node_plugin.BUILD.bazel",
+)
+

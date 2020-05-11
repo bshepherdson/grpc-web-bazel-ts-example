@@ -1,0 +1,59 @@
+#load("@build_bazel_rules_nodejs//src/protobufjs:ts_proto_library.bzl", "ts_proto_library")
+#load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+load("@npm_bazel_typescript//:index.bzl", "ts_library")
+load(":ts_grpc_proto_library.bzl", "ts_grpc_proto_library")
+
+ts_grpc_proto_library(
+    name = "greeter_proto_ts",
+    proto = "greeter.proto",
+    visibility = ["//server:__subpackages__"],
+)
+
+
+# Figure out that script; it's apparently recursive when I only want one file.
+# Figure out what the -I is really looking for, see if I can find a better
+# example of calling these commands.
+# https://adnanahmed.info/blog/2019/11/01/grpc-with-nodejs-typescript/
+genrule(
+    name = "greeter_proto_ts_genrule",
+    cmd = " ".join([
+        #"echo",
+        #"find .;",
+        "$(location @npm//grpc-tools/bin:grpc_tools_node_protoc)",
+        "--js_out=import_style=commonjs,binary:$(@D)",
+        "--grpc_out=$(@D)",
+        #"--plugin=protoc-gen-grpc=$(location @npm//grpc-tools/bin:grpc_tools_node_protoc_plugin)",
+        "-I `dirname $<`",
+        "$<",
+        ";",
+        "$(location @npm//grpc-tools/bin:grpc_tools_node_protoc)",
+        "--plugin=protoc-gen-ts=$(location @npm//grpc_tools_node_protoc_ts/bin:protoc-gen-ts)",
+        "--ts_out=$(@D)",
+        "-I `dirname $<`",
+        "$<",
+    ]),
+    srcs = [
+        "greeter.proto",
+    ],
+    outs = [
+        "greeter_grpc_pb.js",
+        "greeter_pb.js",
+    ],
+    message = "Compiling Node.js libraries for $<",
+    local = 1,
+    tools = [
+        "@npm//grpc-tools/bin:grpc_tools_node_protoc",
+        "@npm//grpc-tools/bin:grpc_tools_node_protoc_plugin",
+        "@npm//grpc_tools_node_protoc_ts/bin:protoc-gen-ts",
+    ],
+)
+
+# There's got to be a recommendation from gRPC team of how to build for Node
+# using Bazel - even if it's with a third_party thing, right? This shouldn't be
+# sort hard but the Node wrappers are shit. I actually could just fetch these
+# deps directly and run them, I think.
+#
+# I can download the binary directly with http_archive and roll my own trivial
+# BUILD file for it that exports the files, then use them. Then there's no Node
+# nonsense getting in the way.
+

@@ -9,6 +9,8 @@ ts_library(
     srcs = glob(["*.ts"]),
     deps = [
         "@npm//@types/node",
+        "@npm//grpc",
+        "//proto:greeter_proto_ts",
         "//server/lib",
     ],
     tsconfig = ":tsconfig.json",
@@ -33,6 +35,9 @@ rollup_bundle(
 nodejs_binary(
     name = "server",
     data = [
+        "@npm//google-protobuf",
+        "@npm//grpc",
+        "//proto:greeter_proto_ts",
         ":bundle_server.js",
     ],
     entry_point = "bundle_server.js",
