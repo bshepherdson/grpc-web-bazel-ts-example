@@ -49,3 +49,11 @@ nodejs_image(
     #ports = ["5051"],
 )
 
+
+sh_binary(
+    name = "proxy",
+    srcs = ["proxy.sh"],
+    data = ["@grpcwebproxy//:dist/grpcwebproxy-v0.12.0-linux-x86_64"],
+)
+
+

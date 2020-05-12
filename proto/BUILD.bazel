@@ -13,3 +13,36 @@ ts_grpc_web_proto_library(
     visibility = ["//visibility:public"],
 )
 
+
+load("@rules_proto//proto:defs.bzl", "proto_library")
+proto_library(
+    name = "greeter_proto",
+    srcs = ["greeter.proto"],
+)
+
+load("@npm_bazel_labs//:index.bzl", "ts_proto_library")
+load("@rules_proto_grpc//github.com/grpc/grpc-web:defs.bzl", "commonjs_dts_grpc_compile", "ts_grpc_compile")
+#commonjs_dts_grpc_compile(
+#    name = "greeter_grpc-web_grpc",
+#    deps = [":greeter_proto"],
+#    visibility = ["//web:__subpackages__"],
+#)
+ts_proto_library(
+    name = "greeter_ts",
+    proto = ":greeter_proto",
+    visibility = ["//web:__subpackages__"],
+)
+
+#ts_grpc_compile(
+#    name = "greeter_grpc-web_grpc",
+#    deps = [":greeter_proto"],
+#    visibility = ["//web:__subpackages__"],
+#)
+#
+#ts_library(
+#    name = "greeter_grpc-web_ts",
+#    srcs = [":GreeterServiceClientPb.ts"],
+#    tsconfig = "//web:tsconfig.json",
+#    visibility = ["//web:__subpackages__"],
+#)
+

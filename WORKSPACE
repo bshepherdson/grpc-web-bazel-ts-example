@@ -10,10 +10,11 @@ workspace(
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "f9e7b9f42ae202cc2d2ce6d698ccb49a9f7f7ea572a78fd451696d03ef2ee116",
     urls = [
-        "https://github.com/bazelbuild/rules_nodejs/releases/download/1.6.0/rules_nodejs-1.6.0.tar.gz",
+        "https://github.com/bazelbuild/rules_nodejs/releases/download/1.6.1/rules_nodejs-1.6.1.tar.gz",
+        #"https://github.com/bazelbuild/rules_nodejs/archive/9428fc47ce7701c3b000435d40c1351491635aa6.zip",
     ],
+    #strip_prefix = "rules_nodejs-9428fc47ce7701c3b000435d40c1351491635aa6",
 )
 
 # Node version is the default
@@ -37,6 +38,78 @@ install_bazel_dependencies()
 # TypeScript toolchain
 load("@npm_bazel_typescript//:index.bzl", "ts_setup_workspace")
 ts_setup_workspace()
+
+
+# Experimental: rules-proto-grpc!
+# Apparently I have to hand-include the Closure libraries for @bazel/labs?
+http_archive(
+    name = "io_bazel_rules_closure",
+    sha256 = "7d206c2383811f378a5ef03f4aacbcf5f47fd8650f6abbc3fa89f3a27dd8b176",
+    strip_prefix = "rules_closure-0.10.0",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_closure/archive/0.10.0.tar.gz",
+        "https://github.com/bazelbuild/rules_closure/archive/0.10.0.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_closure//closure:repositories.bzl", "rules_closure_dependencies", "rules_closure_toolchains")
+rules_closure_dependencies()
+rules_closure_toolchains()
+
+# Base proto rules
+http_archive(
+    name = "rules_proto",
+    sha256 = "602e7161d9195e50246177e7c55b2f39950a9cf7366f74ed5f22fd45750cd208",
+    strip_prefix = "rules_proto-97d8af4dc474595af3900dd85cb3a29ad28cc313",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz",
+        "https://github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz",
+    ],
+)
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+rules_proto_dependencies()
+rules_proto_toolchains()
+
+# @bazel/labs ts_proto_library
+load("@npm_bazel_labs//:package.bzl", "npm_bazel_labs_dependencies")
+npm_bazel_labs_dependencies()
+
+# gRPC proto rules
+http_archive(
+    name = "rules_proto_grpc",
+    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/1.0.2.tar.gz"],
+    sha256 = "5f0f2fc0199810c65a2de148a52ba0aff14d631d4e8202f41aff6a9d590a471b",
+    strip_prefix = "rules_proto_grpc-1.0.2",
+)
+
+load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains", "rules_proto_grpc_repos")
+rules_proto_grpc_toolchains()
+rules_proto_grpc_repos()
+
+# Needed for the gRPC-web parts
+load(
+    "@rules_proto_grpc//github.com/grpc/grpc-web:repositories.bzl",
+   rules_proto_grpc_grpc_web_repos="grpc_web_repos",
+)
+rules_proto_grpc_grpc_web_repos()
+
+load(
+    "@io_bazel_rules_closure//closure:repositories.bzl",
+    "rules_closure_dependencies",
+    "rules_closure_toolchains",
+)
+rules_closure_dependencies(omit_com_google_protobuf = True)
+rules_closure_toolchains()
+# End Experimental
+
+# Go gRPC-web Proxy server, as a prebuilt binary for Linux x86_64
+http_archive(
+    name = "grpcwebproxy",
+    urls = ["https://github.com/improbable-eng/grpc-web/releases/download/v0.12.0/grpcwebproxy-v0.12.0-linux-x86_64.zip"],
+    sha256 = "8c6383d4f299c202a2626bc480d3f4493bda34198e585c4939f1d9f61b6a6d5b",
+    build_file = "//:grpcwebproxy.BUILD.bazel",
+)
+
 
 # Proto toolchain
 http_archive(

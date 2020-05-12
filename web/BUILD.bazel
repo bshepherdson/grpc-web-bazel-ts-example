@@ -1,13 +1,7 @@
 load("@npm_bazel_typescript//:index.bzl", "ts_devserver", "ts_library")
 load("@npm_bazel_rollup//:index.bzl", "rollup_bundle")
 
-exports_files(
-    [
-        "index.html",
-        "tsconfig.json",
-    ],
-    visibility = ["//visibility:public"],
-)
+exports_files(["tsconfig.json"], visibility = ["//visibility:public"])
 
 ts_library(
     name = "main",
@@ -16,9 +10,27 @@ ts_library(
         "@npm//@types/google-protobuf",
         "@npm//google-protobuf",
         "@npm//grpc-web",
-        "//proto:greeter_proto_web_ts",
+        "//proto:greeter_ts",
     ],
     tsconfig = "//web:tsconfig.json",
+)
+
+ts_devserver(
+    name = "devserver",
+    #scripts = [
+    #    "@npm//google-protobuf:google-protobuf__umd",
+    #    "@npm//grpc-web:grpc-web__umd",
+    #],
+    scripts = ["@npm_bazel_labs//grpc_web:bootstrap_scripts"],
+    deps = [
+        ":main",
+    ],
+    entry_module = "tpt/web/index",
+    serving_path = "/bundle.js",
+    static_files = [
+        "index.html",
+    ],
+    port = 5081,
 )
 
 rollup_bundle(
@@ -31,22 +43,5 @@ rollup_bundle(
         ":main",
     ],
     visibility = ["//server:__pkg__"],
-)
-
-ts_devserver(
-    name = "devserver",
-    scripts = [
-        "@npm//google-protobuf:google-protobuf__umd",
-        "@npm//grpc-web:grpc-web__umd",
-    ],
-    deps = [
-        ":main",
-    ],
-    entry_module = "tpt/web/index",
-    serving_path = "/bundle.js",
-    static_files = [
-        "index.html",
-    ],
-    port = 5081,
 )
 

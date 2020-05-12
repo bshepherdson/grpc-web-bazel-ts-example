@@ -13,7 +13,6 @@ ts_library(
         "@npm//@types/node",
         "@npm//express",
         "@npm//http-proxy-middleware",
-        "//server/api",
     ],
     tsconfig = ":tsconfig.json",
 )
