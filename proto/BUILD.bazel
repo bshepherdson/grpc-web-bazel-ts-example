@@ -1,9 +1,15 @@
 load("@npm_bazel_typescript//:index.bzl", "ts_library")
-load(":ts_grpc_proto_library.bzl", "ts_grpc_proto_library")
+load(":ts_grpc_proto_library.bzl", "ts_grpc_proto_library", "ts_grpc_web_proto_library")
 
 ts_grpc_proto_library(
     name = "greeter_proto_ts",
     proto = "greeter.proto",
     visibility = ["//visibility:public"],
 )
- 
+
+ts_grpc_web_proto_library(
+    name = "greeter_proto_web_ts",
+    proto = "greeter.proto",
+    visibility = ["//visibility:public"],
+)
+

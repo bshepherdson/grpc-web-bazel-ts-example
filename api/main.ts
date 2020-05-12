@@ -1,7 +1,7 @@
 import * as grpc from 'grpc';
 
-import {HelloRequest, HelloResponse} from 'vac/proto/greeter_pb';
-import {GreeterService, IGreeterServer} from 'vac/proto/greeter_grpc_pb';
+import {HelloRequest, HelloResponse} from 'tpt/proto/greeter_pb';
+import {GreeterService, IGreeterServer} from 'tpt/proto/greeter_grpc_pb';
 
 class GreeterHandler implements IGreeterServer {
   sayHello(call: grpc.ServerUnaryCall<HelloRequest>,

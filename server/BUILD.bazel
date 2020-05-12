@@ -12,6 +12,7 @@ ts_library(
         "@npm//@types/express",
         "@npm//@types/node",
         "@npm//express",
+        "@npm//http-proxy-middleware",
         "//server/api",
     ],
     tsconfig = ":tsconfig.json",
@@ -31,6 +32,7 @@ RUNTIME_DEPS = [
     "@npm//google-protobuf",
     "@npm//grpc",
     "@npm//grpc-express",
+    "@npm//http-proxy-middleware",
     "//proto:greeter_proto_ts",
     ":server_bundle.js",
 ]
@@ -47,5 +49,6 @@ nodejs_binary(
     name = "dev",
     data = RUNTIME_DEPS,
     entry_point = "server_bundle.js",
+    visibility = ["//:__pkg__"],
 )
 

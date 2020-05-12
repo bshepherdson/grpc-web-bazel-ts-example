@@ -4,17 +4,18 @@
     "lib": [
       "es5",
       "es2015.promise",
+      "dom",
       "es2016",
       "esnext.asynciterable",
       "es2017.object"
     ],
-    "target": "es2018",
-    "esModuleInterop": true,
-    "noImplicitAny": true,
+    "target": "es5",
+    "moduleResolution": "node",
     "sourceMap": true,
     "strictNullChecks": true,
     "strict": true,
     "baseUrl": ".",
+    "rootDir": ".",
     "paths": {
       "tpt/*": [
         "*",

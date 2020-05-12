@@ -36,6 +36,7 @@ nodejs_binary(
     name = "dev",
     data = RUNTIME_DEPS,
     entry_point = "api_bundle.js",
+    visibility = ["//:__pkg__"],
 )
 
 nodejs_image(

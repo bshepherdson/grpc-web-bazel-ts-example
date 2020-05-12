@@ -1,13 +1,13 @@
 workspace(
     # How this workspace would be referenced with absolute labels from another workspace
-    name = "vac",
+    name = "tpt",
     # Map the @npm bazel workspace to the node_modules directory.
     # This lets Bazel use the same node_modules as other local tooling.
     managed_directories = {"@npm": ["node_modules"]},
 )
 
 # Top-level setup
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 http_archive(
     name = "build_bazel_rules_nodejs",
     sha256 = "f9e7b9f42ae202cc2d2ce6d698ccb49a9f7f7ea572a78fd451696d03ef2ee116",
@@ -56,11 +56,19 @@ http_archive(
     sha256 = "ddfc9081c2993d574216870760775703fd974282dfd1cf417f89f58bdc08f1ed",
     build_file = "//:grpc_node_plugin.BUILD.bazel",
 )
+http_file(
+    name = "grpc_web_plugin",
+    executable = True,
+    downloaded_file_path = "protoc-gen-grpc-web",
+    urls = [" https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64"],
+    sha256 = "0b9a0a62f6e8d486e3afcfa172ced25bd584b56ad218e90ecf64f65e4f9457bd",
+)
 
 # Docker setup
 http_archive(
     name = "io_bazel_rules_docker",
     strip_prefix = "rules_docker-0.14.1",
+    sha256 = "dc97fccceacd4c6be14e800b2a00693d5e8d07f69ee187babfd04a80a9f8e250",
     urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.1/rules_docker-v0.14.1.tar.gz"],
 )
 

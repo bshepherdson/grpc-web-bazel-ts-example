@@ -1,0 +1,52 @@
+load("@npm_bazel_typescript//:index.bzl", "ts_devserver", "ts_library")
+load("@npm_bazel_rollup//:index.bzl", "rollup_bundle")
+
+exports_files(
+    [
+        "index.html",
+        "tsconfig.json",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+ts_library(
+    name = "main",
+    srcs = glob(["*.ts"]),
+    deps = [
+        "@npm//@types/google-protobuf",
+        "@npm//google-protobuf",
+        "@npm//grpc-web",
+        "//proto:greeter_proto_web_ts",
+    ],
+    tsconfig = "//web:tsconfig.json",
+)
+
+rollup_bundle(
+    name = "bundle",
+    entry_point = "index.ts",
+    format = "iife",
+    deps = [
+        "@npm//google-protobuf:google-protobuf__umd",
+        "@npm//grpc-web:grpc-web__umd",
+        ":main",
+    ],
+    visibility = ["//server:__pkg__"],
+)
+
+ts_devserver(
+    name = "devserver",
+    scripts = [
+        "@npm//google-protobuf:google-protobuf__umd",
+        "@npm//grpc-web:grpc-web__umd",
+    ],
+    deps = [
+        ":main",
+    ],
+    entry_module = "tpt/web/index",
+    serving_path = "/bundle.js",
+    static_files = [
+        "index.html",
+    ],
+    port = 5081,
+)
+
