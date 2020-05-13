@@ -13,9 +13,7 @@ http_archive(
     name = "build_bazel_rules_nodejs",
     urls = [
         "https://github.com/bazelbuild/rules_nodejs/releases/download/1.6.1/rules_nodejs-1.6.1.tar.gz",
-        #"https://github.com/bazelbuild/rules_nodejs/archive/9428fc47ce7701c3b000435d40c1351491635aa6.zip",
     ],
-    #strip_prefix = "rules_nodejs-9428fc47ce7701c3b000435d40c1351491635aa6",
 )
 
 # Node version is the default
@@ -23,7 +21,6 @@ load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install
 
 node_repositories(
     package_json = ["//:package.json"],
-    #node_version = "12.13.0",
 )
 
 # Dependencies: Bazel-managed by Yarn
@@ -43,8 +40,13 @@ load("@npm_bazel_typescript//:index.bzl", "ts_setup_workspace")
 
 ts_setup_workspace()
 
-# Experimental: rules-proto-grpc!
-# Apparently I have to hand-include the Closure libraries for @bazel/labs?
+
+###########################
+# gRPC Rules Setup
+###########################
+
+# I had problems loading @bazel/labs without including hte Closure rules first.
+# This seems like a bug, but it's easy enough to work around.
 http_archive(
     name = "io_bazel_rules_closure",
     sha256 = "7d206c2383811f378a5ef03f4aacbcf5f47fd8650f6abbc3fa89f3a27dd8b176",
@@ -61,7 +63,7 @@ rules_closure_dependencies()
 
 rules_closure_toolchains()
 
-# Base proto rules
+# Fundamental protocol buffers rules
 http_archive(
     name = "rules_proto",
     sha256 = "602e7161d9195e50246177e7c55b2f39950a9cf7366f74ed5f22fd45750cd208",
@@ -78,7 +80,8 @@ rules_proto_dependencies()
 
 rules_proto_toolchains()
 
-# @bazel/labs ts_proto_library
+# @bazel/labs for the ts_proto_library rule
+# This generates the gRPC-web code.
 load("@npm_bazel_labs//:package.bzl", "npm_bazel_labs_dependencies")
 
 npm_bazel_labs_dependencies()
@@ -97,7 +100,7 @@ rules_proto_grpc_toolchains()
 
 rules_proto_grpc_repos()
 
-# Needed for the gRPC-web parts
+# Runtime dependencies needed by the gRPC-web generated code.
 load(
     "@rules_proto_grpc//github.com/grpc/grpc-web:repositories.bzl",
     rules_proto_grpc_grpc_web_repos = "grpc_web_repos",
@@ -112,9 +115,11 @@ load(
 )
 rules_closure_dependencies(omit_com_google_protobuf = True)
 rules_closure_toolchains()
-# End Experimental
 
 # Go gRPC-web Proxy server, as a prebuilt binary for Linux x86_64
+# This is needed because gRPC-web does not directly expose gRPC API servers to
+# HTTP traffic. This is a prebuilt, flag-configured proxy that brokers between
+# gRPC-web HTTP requests and gRPC backend TCP.
 http_archive(
     name = "grpcwebproxy",
     urls = ["https://github.com/improbable-eng/grpc-web/releases/download/v0.12.0/grpcwebproxy-v0.12.0-linux-x86_64.zip"],
@@ -122,7 +127,7 @@ http_archive(
     build_file = "//:grpcwebproxy.BUILD.bazel",
 )
 
-# Proto toolchain
+# Protobuf toolchain
 http_archive(
     name = "com_google_protobuf",
     strip_prefix = "protobuf-master",
@@ -133,9 +138,10 @@ load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 
 protobuf_deps()
 
-# Hack: I can't use grpc-tools' node wrappers properly, they don't like being
-# used as a plugin by the ts_grpc_proto_library rules.
-# So I depend directly on the plugin as a binary.
+# Hack: We can't use grpc-tools' node wrappers properly, they don't like being
+# used as a --plugin by the ts_grpc_proto_library rules.
+# So we depend directly on the underlying, binary plugin without their Node
+# wrappers.
 http_archive(
     name = "grpc_node_plugin",
     urls = [" https://node-precompiled-binaries.grpc.io/grpc-tools/v1.8.1/linux-x64.tar.gz"],
@@ -151,7 +157,10 @@ http_file(
     sha256 = "0b9a0a62f6e8d486e3afcfa172ced25bd584b56ad218e90ecf64f65e4f9457bd",
 )
 
-# Docker setup
+# Optional: Docker setup
+# If you're not using Docker, feel free to drop this section.
+# If you are using Docker, notice that the nodejs_binary and nodejs_image rules
+# are identical.
 http_archive(
     name = "io_bazel_rules_docker",
     strip_prefix = "rules_docker-0.14.1",

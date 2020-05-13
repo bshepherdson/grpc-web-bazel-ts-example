@@ -3,6 +3,9 @@ load("@io_bazel_rules_docker//nodejs:image.bzl", "nodejs_image")
 load("@npm_bazel_rollup//:index.bzl", "rollup_bundle")
 load("@npm_bazel_typescript//:index.bzl", "ts_library")
 
+#################################
+# API server - application code #
+#################################
 exports_files(
     ["tsconfig.json"],
     visibility = ["//visibility:public"],
@@ -46,12 +49,11 @@ nodejs_image(
     name = "api",
     data = RUNTIME_DEPS,
     entry_point = "api_bundle.js",
-    # TODO: I thought ports needed to be explicitly exported? container_image()
-    # supports that but apparently the Node.js one doesn't forward that
-    # parameter?
-    #ports = ["5051"],
 )
 
+###############################
+# API Proxy server - reusable #
+###############################
 sh_binary(
     name = "proxy",
     srcs = ["proxy.sh"],

@@ -42,8 +42,6 @@ nodejs_image(
     name = "server",
     data = RUNTIME_DEPS,
     entry_point = "server_bundle.js",
-    # See note in //api about the port parameter.
-    #ports = ["5080"],
 )
 
 nodejs_binary(

@@ -1,6 +1,4 @@
 load(":ts_grpc_proto_library.bzl", "ts_grpc_proto_library", "ts_grpc_web_proto_library")
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
-load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
 load("@npm_bazel_labs//:index.bzl", "ts_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
@@ -19,14 +17,6 @@ ts_grpc_proto_library(
     visibility = ["//visibility:public"],
 )
 
-
-
-# This is grpc-web-only and conflicts with the files above.
-#ts_proto_library(
-#    name = "greeter_ts_proto",
-#    proto = ":greeter_proto",
-#    visibility = ["//api:__subpackages__"],
-#)
 
 ###############
 # Web Flavour #
@@ -52,15 +42,3 @@ ts_proto_library(
     visibility = ["//web:__subpackages__"],
 )
 
-#ts_grpc_compile(
-#    name = "greeter_grpc-web_grpc",
-#    deps = [":greeter_proto"],
-#    visibility = ["//web:__subpackages__"],
-#)
-#
-#ts_library(
-#    name = "greeter_grpc-web_ts",
-#    srcs = [":GreeterServiceClientPb.ts"],
-#    tsconfig = "//web:tsconfig.json",
-#    visibility = ["//web:__subpackages__"],
-#)
