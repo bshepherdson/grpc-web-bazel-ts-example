@@ -8,6 +8,7 @@ workspace(
 
 # Top-level setup
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
+
 http_archive(
     name = "build_bazel_rules_nodejs",
     urls = [
@@ -19,10 +20,12 @@ http_archive(
 
 # Node version is the default
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
+
 node_repositories(
     package_json = ["//:package.json"],
     #node_version = "12.13.0",
 )
+
 # Dependencies: Bazel-managed by Yarn
 yarn_install(
     name = "npm",
@@ -30,15 +33,15 @@ yarn_install(
     yarn_lock = "//:yarn.lock",
 )
 
-
 # Install any Bazel rules which were extracted earlier by the yarn_install rule.
 load("@npm//:install_bazel_dependencies.bzl", "install_bazel_dependencies")
+
 install_bazel_dependencies()
 
 # TypeScript toolchain
 load("@npm_bazel_typescript//:index.bzl", "ts_setup_workspace")
-ts_setup_workspace()
 
+ts_setup_workspace()
 
 # Experimental: rules-proto-grpc!
 # Apparently I have to hand-include the Closure libraries for @bazel/labs?
@@ -53,7 +56,9 @@ http_archive(
 )
 
 load("@io_bazel_rules_closure//closure:repositories.bzl", "rules_closure_dependencies", "rules_closure_toolchains")
+
 rules_closure_dependencies()
+
 rules_closure_toolchains()
 
 # Base proto rules
@@ -66,12 +71,16 @@ http_archive(
         "https://github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz",
     ],
 )
+
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
 rules_proto_dependencies()
+
 rules_proto_toolchains()
 
 # @bazel/labs ts_proto_library
 load("@npm_bazel_labs//:package.bzl", "npm_bazel_labs_dependencies")
+
 npm_bazel_labs_dependencies()
 
 # gRPC proto rules
@@ -83,14 +92,17 @@ http_archive(
 )
 
 load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains", "rules_proto_grpc_repos")
+
 rules_proto_grpc_toolchains()
+
 rules_proto_grpc_repos()
 
 # Needed for the gRPC-web parts
 load(
     "@rules_proto_grpc//github.com/grpc/grpc-web:repositories.bzl",
-   rules_proto_grpc_grpc_web_repos="grpc_web_repos",
+    rules_proto_grpc_grpc_web_repos = "grpc_web_repos",
 )
+
 rules_proto_grpc_grpc_web_repos()
 
 load(
@@ -110,14 +122,15 @@ http_archive(
     build_file = "//:grpcwebproxy.BUILD.bazel",
 )
 
-
 # Proto toolchain
 http_archive(
     name = "com_google_protobuf",
     strip_prefix = "protobuf-master",
     urls = ["https://github.com/protocolbuffers/protobuf/archive/master.zip"],
 )
+
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
 protobuf_deps()
 
 # Hack: I can't use grpc-tools' node wrappers properly, they don't like being
@@ -129,6 +142,7 @@ http_archive(
     sha256 = "ddfc9081c2993d574216870760775703fd974282dfd1cf417f89f58bdc08f1ed",
     build_file = "//:grpc_node_plugin.BUILD.bazel",
 )
+
 http_file(
     name = "grpc_web_plugin",
     executable = True,

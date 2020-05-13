@@ -1,35 +1,54 @@
-load("@npm_bazel_typescript//:index.bzl", "ts_library")
 load(":ts_grpc_proto_library.bzl", "ts_grpc_proto_library", "ts_grpc_web_proto_library")
-
-ts_grpc_proto_library(
-    name = "greeter_proto_ts",
-    proto = "greeter.proto",
-    visibility = ["//visibility:public"],
-)
-
-ts_grpc_web_proto_library(
-    name = "greeter_proto_web_ts",
-    proto = "greeter.proto",
-    visibility = ["//visibility:public"],
-)
-
-
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
+load("@npm_bazel_labs//:index.bzl", "ts_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
+
+###############
+# API Flavour #
+###############
 proto_library(
     name = "greeter_proto",
     srcs = ["greeter.proto"],
+    visibility = ["//web:__pkg__"],
 )
 
-load("@npm_bazel_labs//:index.bzl", "ts_proto_library")
-load("@rules_proto_grpc//github.com/grpc/grpc-web:defs.bzl", "commonjs_dts_grpc_compile", "ts_grpc_compile")
-#commonjs_dts_grpc_compile(
-#    name = "greeter_grpc-web_grpc",
-#    deps = [":greeter_proto"],
-#    visibility = ["//web:__subpackages__"],
+ts_grpc_proto_library(
+    name = "greeter_ts_proto",
+    proto = "greeter.proto",
+    visibility = ["//visibility:public"],
+)
+
+
+
+# This is grpc-web-only and conflicts with the files above.
+#ts_proto_library(
+#    name = "greeter_ts_proto",
+#    proto = ":greeter_proto",
+#    visibility = ["//api:__subpackages__"],
 #)
+
+###############
+# Web Flavour #
+###############
+
+# Hack: Copying the file from foo.proto to foo_web.proto to avoid the naming
+# collision.
+genrule(
+    name = "greeter_copy",
+    srcs = ["greeter.proto"],
+    outs = ["greeter_web.proto"],
+    cmd = "cp $< $(@)",
+)
+
+proto_library(
+    name = "greeter_web_proto",
+    srcs = [":greeter_copy"],
+)
+
 ts_proto_library(
-    name = "greeter_ts",
-    proto = ":greeter_proto",
+    name = "greeter_web_ts_proto",
+    proto = ":greeter_web_proto",
     visibility = ["//web:__subpackages__"],
 )
 
@@ -45,4 +64,3 @@ ts_proto_library(
 #    tsconfig = "//web:tsconfig.json",
 #    visibility = ["//web:__subpackages__"],
 #)
-

@@ -11,4 +11,3 @@ ts_library(
     ],
     tsconfig = "//server:tsconfig.json",
 )
-

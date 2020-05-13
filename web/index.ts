@@ -1,7 +1,7 @@
 //import * as jspb from 'google-protobuf';
 //import * as grpc from 'grpc';
-import {HelloRequest, HelloResponse} from 'tpt/proto/greeter_pb';
-import {GreeterClient} from 'tpt/proto/greeter_grpc_web_pb';
+import {HelloRequest, HelloResponse} from 'tpt/proto/greeter_web_pb';
+import {GreeterClient} from 'tpt/proto/greeter_web_grpc_web_pb';
 
 const client = new GreeterClient('http://localhost:5082');
 

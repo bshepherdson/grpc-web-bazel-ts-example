@@ -3,7 +3,10 @@ load("@io_bazel_rules_docker//nodejs:image.bzl", "nodejs_image")
 load("@npm_bazel_rollup//:index.bzl", "rollup_bundle")
 load("@npm_bazel_typescript//:index.bzl", "ts_library")
 
-exports_files(["tsconfig.json"], visibility = ["//visibility:public"])
+exports_files(
+    ["tsconfig.json"],
+    visibility = ["//visibility:public"],
+)
 
 ts_library(
     name = "api_lib",
@@ -11,7 +14,7 @@ ts_library(
     deps = [
         "@npm//@types/node",
         "@npm//grpc",
-        "//proto:greeter_proto_ts",
+        "//proto:greeter_ts_proto",
     ],
     tsconfig = ":tsconfig.json",
 )
@@ -28,7 +31,7 @@ rollup_bundle(
 RUNTIME_DEPS = [
     "@npm//google-protobuf",
     "@npm//grpc",
-    "//proto:greeter_proto_ts",
+    "//proto:greeter_ts_proto",
     ":api_bundle.js",
 ]
 
@@ -49,11 +52,8 @@ nodejs_image(
     #ports = ["5051"],
 )
 
-
 sh_binary(
     name = "proxy",
     srcs = ["proxy.sh"],
     data = ["@grpcwebproxy//:dist/grpcwebproxy-v0.12.0-linux-x86_64"],
 )
-
-

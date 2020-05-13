@@ -3,7 +3,10 @@ load("@io_bazel_rules_docker//nodejs:image.bzl", "nodejs_image")
 load("@npm_bazel_rollup//:index.bzl", "rollup_bundle")
 load("@npm_bazel_typescript//:index.bzl", "ts_library")
 
-exports_files(["tsconfig.json"], visibility = ["//visibility:public"])
+exports_files(
+    ["tsconfig.json"],
+    visibility = ["//visibility:public"],
+)
 
 ts_library(
     name = "server_lib",
@@ -32,7 +35,6 @@ RUNTIME_DEPS = [
     "@npm//grpc",
     "@npm//grpc-express",
     "@npm//http-proxy-middleware",
-    "//proto:greeter_proto_ts",
     ":server_bundle.js",
 ]
 
