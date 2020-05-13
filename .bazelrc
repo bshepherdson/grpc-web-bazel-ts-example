@@ -85,3 +85,6 @@ run --incompatible_strict_action_env
 # rather than user.bazelrc as suggested in the Bazel docs)
 try-import %workspace%/.bazelrc.user
 
+
+# Go configuration
+build --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64

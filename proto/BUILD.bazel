@@ -19,6 +19,11 @@ ts_grpc_proto_library(
     visibility = ["//visibility:public"],
 )
 
+#ts_grpc_web_proto_library(
+#    name = "greeter_proto_web_ts",
+#    proto = "greeter.proto",
+#    visibility = ["//visibility:public"],
+#)
 
 
 # This is grpc-web-only and conflicts with the files above.
@@ -52,15 +57,20 @@ ts_proto_library(
     visibility = ["//web:__subpackages__"],
 )
 
-#ts_grpc_compile(
-#    name = "greeter_grpc-web_grpc",
-#    deps = [":greeter_proto"],
-#    visibility = ["//web:__subpackages__"],
+
+# Defunct Go things
+#load("@npm_bazel_typescript//:index.bzl", "ts_library")
+#go_proto_library(
+#    name = "greeter_go_proto",
+#    compilers = ["@io_bazel_rules_go//proto:gogo_grpc"],
+#    importpath = "github.com/shepheb/grpc-web-bazel-ts-example/proto/greeter",
+#    proto = ":greeter_proto",
+#    visibility = ["//visibility:public"],
 #)
 #
-#ts_library(
-#    name = "greeter_grpc-web_ts",
-#    srcs = [":GreeterServiceClientPb.ts"],
-#    tsconfig = "//web:tsconfig.json",
-#    visibility = ["//web:__subpackages__"],
+#go_library(
+#    name = "go_default_library",
+#    embed = [":greeter_go_proto"],
+#    importpath = "github.com/shepheb/grpc-web-bazel-ts-example/proto/greeter",
+#    visibility = ["//visibility:public"],
 #)

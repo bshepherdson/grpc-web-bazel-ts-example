@@ -1,0 +1,21 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+# gazelle:prefix github.com/shepheb/grpc/grpc-web-bazel-ts-example
+# gazelle:build_file_name BUILD.bazel
+# gazelle:go_grpc_compilers @io_bazel_rules_go//proto:gogo_grpc
+# gazelle:exclude node_modules
+gazelle(name = "gazelle")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["hello.go"],
+    importpath = "github.com/shepheb/grpc/grpc-web-bazel-ts-example",
+    visibility = ["//visibility:private"],
+)
+
+go_binary(
+    name = "grpc-web-bazel-ts-example",
+    embed = [":go_default_library"],
+    visibility = ["//visibility:public"],
+)
