@@ -1,4 +1,5 @@
 load("@npm_bazel_typescript//:index.bzl", "ts_devserver", "ts_library")
+#load("@build_bazel_rules_nodejs//:index.bzl", "rollup_bundle")
 
 exports_files(
     ["tsconfig.json"],
@@ -12,14 +13,24 @@ ts_library(
         "@npm//@types/google-protobuf",
         "@npm//google-protobuf",
         "@npm//grpc-web",
+        "@npm//vue",
         "//proto:greeter_web_ts_proto",
     ],
     tsconfig = "//web:tsconfig.json",
 )
 
+#rollup_bundle(
+#    name = "bundle",
+#    entry_point = "index.ts",
+#    deps = [":main"],
+#)
+
 ts_devserver(
     name = "devserver",
-    scripts = ["@npm_bazel_labs//grpc_web:bootstrap_scripts"],
+    scripts = [
+        "@npm_bazel_labs//grpc_web:bootstrap_scripts",
+        "//:vue_umd",
+    ],
     deps = [
         ":main",
     ],

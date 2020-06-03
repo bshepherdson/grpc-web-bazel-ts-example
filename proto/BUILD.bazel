@@ -1,6 +1,7 @@
 load(":ts_grpc_proto_library.bzl", "ts_grpc_proto_library", "ts_grpc_web_proto_library")
 load("@npm_bazel_labs//:index.bzl", "ts_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_proto_grpc//nodejs:defs.bzl", "nodejs_proto_compile")
 
 ###############
 # API Flavour #
@@ -17,6 +18,12 @@ ts_grpc_proto_library(
     visibility = ["//visibility:public"],
 )
 
+
+# Experimental
+nodejs_proto_compile(
+    name = "greeter_nodejs_proto",
+    deps = [":greeter_proto"],
+)
 
 ###############
 # Web Flavour #

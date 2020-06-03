@@ -1,0 +1,26 @@
+# Modest hack to expose the right Vue.js files for use from //web:devserver.
+#exports_files(["node_modules/vue/dist/vue.esm.browser.js"])
+
+load("@build_bazel_rules_nodejs//internal/npm_install:npm_umd_bundle.bzl", "npm_umd_bundle")
+
+npm_umd_bundle(
+    name = "vue_umd",
+    package_name = "vue",
+    entry_point = "@npm//:node_modules/vue/dist/vue.esm.js",
+    package = "@npm//vue",
+    visibility = ["//web:__subpackages__"],
+)
+
+
+# HACK: Pulling the internal js_library because we need its amd_names field.
+#load("@build_bazel_rules_nodejs//internal/js_library:js_library.bzl", "js_library")
+#
+#js_library(
+#    name = "vue",
+#    srcs = ["node_modules/vue/dist/vue.js"],
+#    visibility = ["//web:__subpackages__"],
+#    package_name = "vue",
+#    amd_names = {
+#        "vue": "Vue", # Maps import 'vue' to return the global Vue object.
+#    },
+#)

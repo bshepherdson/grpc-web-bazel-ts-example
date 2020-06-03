@@ -4,7 +4,12 @@
     <script src="/bundle.js"></script>
   </head>
   <body class="main-colour">
-    See the JS Console. You should see "Hello, World!" if everything worked.
+    <div id="app">
+      <form v-on:submit="send" action="javascript:">
+        <input v-model="name" />
+        {{result}}
+      </form>
+    </div>
   </body>
 </html>
 
