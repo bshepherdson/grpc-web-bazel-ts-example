@@ -14,7 +14,7 @@
         "grpc-tools": "^1.8.1",
         "grpc-web": "^1.0.7",
         "grpc_tools_node_protoc_ts": "^3.0.0",
-        "minimist": "^1.2.5",
+        "minimist": "^1.2.6",
         "request": "^2.88.2",
         "rollup": "^2.8.2",
         "typescript": "^3.8.3"
